@@ -6,7 +6,6 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-1
   ECR_BACKEND_REPOSITORY: taxsathi-backend
   ECR_FRONTEND_REPOSITORY: taxsathi-frontend
 
@@ -58,7 +57,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Log in to Amazon ECR
         id: login-ecr
@@ -88,4 +87,4 @@ jobs:
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}" \
             --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}' \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ secrets.AWS_REGION }}
