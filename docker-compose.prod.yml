@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/taxsathi-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: taxsathi-frontend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+    ports:
+      - "3000:3000"
+
+  backend:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/taxsathi-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taxsathi-backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"

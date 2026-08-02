@@ -1,0 +1,215 @@
+{
+  "info": {
+    "name": "GST Invoice & Employee Management API",
+    "description": "Laravel REST API consumed by the Next.js frontend. Set collection variables `base_url` and `token`. Obtain `token` from **Auth → Google login** (paste ID token from the browser after Google Sign-In).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "token", "value": "" },
+    { "key": "invoice_id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Google login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PASTE_GOOGLE_ID_TOKEN_JWT\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/auth/google"
+          }
+        },
+        {
+          "name": "Contact (store message)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"message\": \"Hello from Postman\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/contact"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authenticated",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "Get current user",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/user"
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/auth/logout"
+          }
+        },
+        {
+          "name": "Team list",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/team"
+          }
+        },
+        {
+          "name": "Firms index",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/firms"
+          }
+        },
+        {
+          "name": "Firms store",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Pvt Ltd\",\n  \"gstin\": \"22AAAAA0000A1Z5\",\n  \"address\": \"Mumbai\",\n  \"phone\": \"+91 90000 00000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/firms"
+          }
+        },
+        {
+          "name": "Invoices index",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/invoices?firm_id=&month=&year=&direction="
+          }
+        },
+        {
+          "name": "Invoices store",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firm_id\": 1,\n  \"invoice_number\": \"INV-POSTMAN-001\",\n  \"date\": \"2026-05-01\",\n  \"direction\": \"outbound\",\n  \"tax_mode\": \"intra_state\",\n  \"cgst_percent\": 9,\n  \"sgst_percent\": 9,\n  \"igst_percent\": null,\n  \"items\": [\n    { \"description\": \"Consulting\", \"quantity\": 1, \"rate\": 10000 }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/invoices"
+          }
+        },
+        {
+          "name": "Invoices show",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/invoices/{{invoice_id}}"
+          }
+        },
+        {
+          "name": "Invoices send email",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"client@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/invoices/{{invoice_id}}/send-email"
+          }
+        },
+        {
+          "name": "Attendances index",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/attendances?page=1&user_id="
+          }
+        },
+        {
+          "name": "Attendances store",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"date\": \"2026-05-13\",\n  \"status\": \"present\",\n  \"overtime_hours\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/attendances"
+          }
+        },
+        {
+          "name": "Reports dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/reports/dashboard"
+          }
+        },
+        {
+          "name": "Reports attendance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/reports/attendance?month=5&year=2026&user_id="
+          }
+        },
+        {
+          "name": "Reports attendance yearly",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/reports/attendance/yearly?year=2026&user_id="
+          }
+        },
+        {
+          "name": "Reports invoices",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/reports/invoices?month=5&year=2026&firm_id=&direction="
+          }
+        },
+        {
+          "name": "Employees index (admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": "{{base_url}}/employees"
+          }
+        },
+        {
+          "name": "Employees store (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Staff\",\n  \"email\": \"staff.new@example.com\",\n  \"role\": \"staff\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{base_url}}/employees"
+          }
+        }
+      ]
+    }
+  ]
+}
