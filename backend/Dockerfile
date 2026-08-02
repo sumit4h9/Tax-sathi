@@ -32,7 +32,7 @@ ENV MONGODB_URI="mongodb://127.0.0.1:27017"
 ENV MONGODB_DATABASE="dummy"
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer update --no-dev --no-interaction && composer install --no-dev --optimize-autoloader --no-interaction
 
 
 
