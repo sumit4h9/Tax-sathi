@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ArrowLeft, Search, FileText, Download, TrendingUp, Users, DollarSign, Clock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Search, FileText, Download, TrendingUp, Users, DollarSign, Clock } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import api from '@/lib/axios';
@@ -11,7 +11,6 @@ import { unwrapApiData } from '@/lib/apiResponse';
 export default function SalaryReportsPage() {
   const t = useTranslations('Reports');
   const ti = useTranslations('Index');
-  const ta = useTranslations('Attendance');
   
   const now = new Date();
   const [month, setMonth] = useState(String(now.getMonth() + 1));
