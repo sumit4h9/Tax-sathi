@@ -85,8 +85,8 @@ jobs:
 
       - name: Deploy to Auto Scaling Group (Instance Refresh)
         run: |
-          echo "Starting Auto Scaling Group Instance Refresh for ${{ secrets.AWS_ASG_NAME }}..."
+          echo "Starting Auto Scaling Group Instance Refresh for taxsathi-asg..."
           aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}" \
+            --auto-scaling-group-name taxsathi-asg \
             --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}' \
             --region ${{ secrets.AWS_REGION }}
