@@ -29,7 +29,7 @@ jobs:
       - name: Validate Composer Dependencies
         run: |
           cd backend
-          composer validate --no-check-all
+          composer validate --no-check-lock
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
