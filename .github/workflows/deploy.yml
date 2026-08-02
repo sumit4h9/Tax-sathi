@@ -69,7 +69,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker pull $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest || true
-          docker build --cache-from $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest ./backend
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest ./backend
           docker push $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_BACKEND_REPOSITORY:latest
 
@@ -79,7 +79,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker pull $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest || true
-          docker build --cache-from $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest ./frontend
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest -t $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest ./frontend
           docker push $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest
 

@@ -11,8 +11,9 @@ systemctl enable docker
 mkdir -p /home/ubuntu/taxsathi/backend
 cd /home/ubuntu/taxsathi
 
-# Fetch AWS Metadata (Region & Account ID)
-AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region || echo "us-east-1")
+# Fetch AWS Metadata (Region & Account ID) using IMDSv2
+TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+AWS_REGION=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region || echo "eu-north-1")
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text || echo "")
 
 # Securely fetch the backend .env file from AWS Systems Manager (SSM) Parameter Store
