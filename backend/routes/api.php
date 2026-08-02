@@ -18,6 +18,10 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\SalaryController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
+
 Route::post('/auth/register', [AuthController::class, 'register'])
     ->middleware('throttle:auth-login');
 Route::post('/auth/login', [AuthController::class, 'login'])
