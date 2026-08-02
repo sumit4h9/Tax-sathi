@@ -48,7 +48,7 @@ if [ -n "$AWS_ACCOUNT_ID" ]; then
 
     # Run ONLY 2 containers
     docker run -d --name taxsathi-frontend --restart always -p 3000:3000 $REGISTRY/taxsathi-frontend:latest
-    docker run -d --name taxsathi-backend --restart always --env-file /home/ubuntu/taxsathi/backend/.env -p 8000:8000 $REGISTRY/taxsathi-backend:latest
+    docker run -d --name taxsathi-backend --restart always --env-file /home/ubuntu/taxsathi/backend/.env -p 8000:10000 $REGISTRY/taxsathi-backend:latest
 fi
 
 echo "EC2 Auto Scaling Instance Bootstrapped Successfully with 2 Containers!"
