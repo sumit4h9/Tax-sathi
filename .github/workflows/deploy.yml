@@ -83,26 +83,9 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_FRONTEND_REPOSITORY:latest
 
       - name: Deploy to Auto Scaling Group (Instance Refresh)
-        if: ${{ secrets.AWS_ASG_NAME != '' }}
         run: |
           echo "Starting Auto Scaling Group Instance Refresh for ${{ secrets.AWS_ASG_NAME }}..."
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}" \
             --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}' \
             --region ${{ env.AWS_REGION }}
-
-      - name: Deploy to Single EC2 Host (SSH Fallback)
-        if: ${{ secrets.EC2_HOST != '' }}
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/taxsathi
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --remove-orphans
-            docker exec taxsathi-backend php artisan config:cache
-            docker exec taxsathi-backend php artisan route:cache
-            docker image prune -af
