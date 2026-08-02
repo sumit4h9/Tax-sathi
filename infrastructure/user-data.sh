@@ -16,18 +16,23 @@ TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-m
 AWS_REGION=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region || echo "eu-north-1")
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text || echo "")
 
-# Securely fetch the backend .env file from AWS Systems Manager (SSM) Parameter Store
-# The EC2 instance must have an IAM Role with permission to read this parameter.
-aws ssm get-parameter \
-    --region $AWS_REGION \
-    --name "/taxsathi/prod/backend-env" \
-    --with-decryption \
-    --query "Parameter.Value" \
-    --output text > /home/ubuntu/taxsathi/backend/.env
+# Retry fetching the SSM parameter up to 5 times (in case IAM role takes a few seconds to attach)
+for i in {1..5}; do
+    aws ssm get-parameter \
+        --region $AWS_REGION \
+        --name "/taxsathi/prod/backend-env" \
+        --with-decryption \
+        --query "Parameter.Value" \
+        --output text > /home/ubuntu/taxsathi/backend/.env && break || sleep 5
+done
 
 if [ -n "$AWS_ACCOUNT_ID" ]; then
     REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY
+    
+    # Retry ECR login up to 5 times
+    for i in {1..5}; do
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY && break || sleep 5
+    done
 
     # Pull latest 2 containers from ECR
     docker pull $REGISTRY/taxsathi-frontend:latest
