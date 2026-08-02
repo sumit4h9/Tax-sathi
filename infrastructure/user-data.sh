@@ -14,7 +14,7 @@ cd /home/ubuntu/taxsathi
 # Fetch AWS Metadata (Region & Account ID) using IMDSv2
 TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 AWS_REGION=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/region || echo "eu-north-1")
-AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text || echo "")
+AWS_ACCOUNT_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .accountId)
 
 # Retry fetching the SSM parameter up to 5 times (in case IAM role takes a few seconds to attach)
 for i in {1..5}; do
