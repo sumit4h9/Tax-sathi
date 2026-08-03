@@ -19,8 +19,10 @@ class InvoiceGeneratedMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $firmName = $this->invoice->firm->name ?? 'TaxSathi';
+
         return new Envelope(
-            subject: 'Invoice: '.$this->invoice->invoice_number,
+            subject: "Tax Invoice {$this->invoice->invoice_number} from {$firmName}",
         );
     }
 

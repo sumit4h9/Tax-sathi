@@ -12,6 +12,15 @@ unzip -q awscliv2.zip
 systemctl start docker
 systemctl enable docker
 
+# Enable 2GB Swap space to prevent OOM kills
+if [ ! -f /swapfile ]; then
+    fallocate -l 2G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=2048
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
 mkdir -p /home/ubuntu/taxsathi/backend
 cd /home/ubuntu/taxsathi
 
