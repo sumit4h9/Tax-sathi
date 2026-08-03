@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\LoginNotificationMail;
+use App\Mail\WelcomeMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -25,6 +28,13 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Send welcome email
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user));
+        } catch (\Exception $e) {
+            \Log::warning('Welcome email failed: ' . $e->getMessage());
+        }
 
         return response()->json([
             'user' => (new UserResource($user->fresh()))->resolve(),
@@ -77,6 +87,15 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Send login notification email
+        try {
+            $loginTime = now()->setTimezone('Asia/Kolkata')->format('d M Y, h:i A T');
+            $ipAddress = $request->ip() ?? 'Unknown';
+            Mail::to($user->email)->send(new LoginNotificationMail($user, $loginTime, $ipAddress));
+        } catch (\Exception $e) {
+            \Log::warning('Login notification email failed: ' . $e->getMessage());
+        }
 
         return response()->json([
             'user' => (new UserResource($user->fresh()))->resolve(),
